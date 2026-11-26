@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Apuray - Planifica tus viajes en transporte publico por Lima Metropolitana y revisa opciones demostrativas de ruta.">
+    <title>Apuray | Planifica tus rutas en Lima</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <a class="salto-contenido" href="#contenido">Saltar al contenido principal</a>
+
+    <!-- AVISO DEMOSTRATIVO Y AJUSTE DE LECTURA -->
+    <div class="barra-superior">
+        <div class="contenedor barra-superior__contenido">
+            <p class="barra-superior__texto">
+                Prototipo académico · Tiempos, tarifas, rutas, mapas y alertas son datos demostrativos; no representan información en tiempo real.
+            </p>
+            <button type="button" id="btnTamanoTexto" class="btn-texto" aria-pressed="false">
+                Letra mas grande
+            </button>
+        </div>
+    </div>
+
+    <!-- ENCABEZADO -->
+    <header class="encabezado" id="inicio">
+        <div class="contenedor encabezado__contenido">
+            <a href="#inicio" class="marca">apuray</a>
+
+            <button type="button" id="btnMenu" class="btn-menu" aria-expanded="false" aria-controls="menuPrincipal">
+                Menu
+            </button>
+
+            <nav id="menuPrincipal" class="navegacion" aria-label="Navegacion principal">
+                <a href="#planificador">Planificar</a>
+                <a href="#transporte">Transporte</a>
+                <a href="#como-funciona">Como funciona</a>
+                <a href="#alertas">Alertas</a>
+                <a href="#preguntas">Preguntas</a>
+                <a href="#contacto" class="enlace-destacado">Contacto</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="contenido">
+        <!-- HERO Y BUSCADOR -->
+        <section id="planificador" class="hero">
+            <div class="contenedor hero__grid">
+
+                <div class="hero__info">
+                    <span class="etiqueta">LIMA METROPOLITANA</span>
+                    <h1>Explora alternativas de movilidad para tus recorridos</h1>
+                    <p class="hero__descripcion">
+                        Organiza tus viajes en bus, corredor, Metropolitano o tren. Revisa tiempos estimados,
+                        compara opciones y consulta avisos de ruta antes de salir.
+                    </p>
+
+                    <ul class="hero__puntos">
+                        <li>Compara alternativas segun tiempo, tarifa referencial y transbordos.</li>
+                        <li>Identifica conexiones entre corredores, alimentadores y troncales.</li>
+                        <li>Revisa reportes comunitarios y preguntas frecuentes en una sola vista.</li>
+                    </ul>
+
+                    <div class="hero__acciones">
+                        <a href="#descarga" class="btn btn--naranja">Conocer la app</a>
+                        <a href="#como-funciona" class="btn btn--secundario">Ver como funciona</a>
+                    </div>
+                </div>
+
+                <!-- BUSCADOR DE RUTAS -->
+                <div class="buscador">
+                    <h2>A donde vas hoy?</h2>
+                    <p class="buscador__subtitulo">Ingresa tu punto de partida, destino y hora para consultar resultados de ejemplo.</p>
+
+                    <div class="ejemplos">
+                        <span class="ejemplos__label">Ejemplos:</span>
+                        <button type="button" class="chip-ejemplo" data-origen="San Miguel" data-destino="Miraflores" data-hora="07:30">
+                            San Miguel a Miraflores
+                        </button>
+                        <button type="button" class="chip-ejemplo" data-origen="Villa Maria del Triunfo" data-destino="UPC Monterrico" data-hora="07:00">
+                            VMT a UPC Monterrico
+                        </button>
+                        <button type="button" class="chip-ejemplo" data-origen="Los Olivos" data-destino="Centro de Lima" data-hora="08:00">
+                            Los Olivos al Centro
+                        </button>
+                    </div>
+
+                    <form id="formularioRuta" novalidate>
+                        <div class="campo">
+                            <label for="origen">Punto de partida</label>
+                            <input type="text" id="origen" value="San Miguel" required placeholder="Ej. San Miguel, Los Olivos">
+                        </div>
+
+                        <div class="campo">
+                            <label for="destino">Punto de destino</label>
+                            <input type="text" id="destino" value="Miraflores" required placeholder="Ej. Miraflores, Surco, Monterrico">
+                        </div>
+
+                        <div class="campo">
+                            <label for="hora">Hora de salida</label>
+                            <input type="time" id="hora" value="07:30" required>
+                        </div>
+
+                        <button type="submit" class="btn btn--naranja btn--ancho">Buscar ruta</button>
+                    </form>
+
+                    <p id="errorRuta" class="aviso-error" role="alert" hidden></p>
+                </div>
+            </div>
+
+            <!-- RESULTADOS Y ESQUEMA DE REFERENCIA -->
+            <div id="resultadosBloque" class="contenedor resultados">
+                <div class="resultados__cabecera">
+                    <div>
+                        <span class="etiqueta etiqueta--azul">RESULTADOS DEMOSTRATIVOS</span>
+                        <h3 id="tituloResultados">Opciones de viaje para tu recorrido</h3>
+                        <p id="subtituloResultados">De "San Miguel" hacia "Miraflores" · Salida: 07:30 (ejemplo)</p>
+                    </div>
+
+                    <div class="orden-botones">
+                        <button type="button" class="btn-orden activo" data-orden="recomendada">Recomendada</button>
+                        <button type="button" class="btn-orden" data-orden="rapida">Mas rapida</button>
+                        <button type="button" class="btn-orden" data-orden="economica">Mas economica</button>
+                    </div>
+                </div>
+
+                <div id="listaRutas" class="resultados__grid" aria-live="polite"></div>
+
+                <!-- REPRESENTACIÓN ESTÁTICA Y DEMOSTRATIVA DEL MAPA -->
+                <div class="mapa-bloque">
+                    <div class="mapa-bloque__cabecera">
+                        <h4>Mapa de referencia en Lima Metropolitana</h4>
+                        <span id="etiquetaZonaMapa">Zona: San Miguel - Miraflores (ejemplo)</span>
+                    </div>
+
+                    <div class="mapa-marco mapa-esquematico" role="img" aria-label="Esquema demostrativo de zonas de Lima Metropolitana. No representa calles ni una ruta geográfica exacta.">
+                        <div class="mapa-esquematico__fondo">
+                            <span class="mapa-zona mapa-zona--norte">NORTE</span>
+                            <span class="mapa-zona mapa-zona--centro">CENTRO</span>
+                            <span class="mapa-zona mapa-zona--sur">SUR</span>
+                            <span class="mapa-zona mapa-zona--este">ESTE</span>
+                            <span class="mapa-linea mapa-linea--principal"></span>
+                            <span class="mapa-linea mapa-linea--secundaria"></span>
+                            <span class="mapa-punto mapa-punto--origen">Origen</span>
+                            <span class="mapa-punto mapa-punto--destino">Destino</span>
+                        </div>
+                    </div>
+                    <p class="mapa-nota">
+                        Esquema visual estático de referencia. No representa calles, recorridos geográficos exactos, tráfico ni ubicación GPS en vivo.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODOS DE TRANSPORTE -->
+        <section id="transporte" class="seccion seccion--gris">
+            <div class="contenedor">
+                <div class="seccion__titulo">
+                    <span class="etiqueta etiqueta--azul">TRANSPORTE EN LIMA</span>
+                    <h2>Servicios que puedes combinar</h2>
+                    <p>Pensado para los desplazamientos cotidianos en distintos distritos de Lima.</p>
+                </div>
+
+                <div class="grid-cuatro">
+                    <article class="tarjeta">
+                        <span class="tarjeta__codigo">01</span>
+                        <h3>Buses y combis</h3>
+                        <p>Consulta referencias de recorridos urbanos y paraderos habituales.</p>
+                    </article>
+
+                    <article class="tarjeta">
+                        <span class="tarjeta__codigo">02</span>
+                        <h3>Corredores</h3>
+                        <p>Revisa conexiones en ejes troncales como Javier Prado, Arequipa o Tacna-Garcilaso.</p>
+                    </article>
+
+                    <article class="tarjeta">
+                        <span class="tarjeta__codigo">03</span>
+                        <h3>Metropolitano</h3>
+                        <p>Planifica viajes combinando estaciones troncales con servicios alimentadores.</p>
+                    </article>
+
+                    <article class="tarjeta">
+                        <span class="tarjeta__codigo">04</span>
+                        <h3>Linea 1 del Metro</h3>
+                        <p>Integra estaciones del tren con rutas locales para llegar a zonas de estudio o trabajo.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- COMO FUNCIONA -->
+        <section id="como-funciona" class="seccion">
+            <div class="contenedor">
+                <div class="seccion__titulo">
+                    <span class="etiqueta etiqueta--azul">PROCESO</span>
+                    <h2>Como funciona Apuray</h2>
+                    <p>Tres pasos simples para revisar alternativas antes de salir de casa.</p>
+                </div>
+
+                <div class="grid-tres">
+                    <article class="tarjeta">
+                        <span class="paso-numero">1</span>
+                        <h3>Define origen, destino y hora</h3>
+                        <p>Indica desde donde sales, a donde vas y a que hora necesitas movilizarte.</p>
+                    </article>
+
+                    <article class="tarjeta">
+                        <span class="paso-numero">2</span>
+                        <h3>Compara las opciones</h3>
+                        <p>Revisa duracion estimada, tarifa de referencia y cantidad de transbordos.</p>
+                    </article>
+
+                    <article class="tarjeta">
+                        <span class="paso-numero">3</span>
+                        <h3>Consulta alertas y reportes</h3>
+                        <p>Observa avisos demostrativos de congestion o saturacion para salir con margen.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ALERTAS Y REPORTES COMUNITARIOS -->
+        <section id="alertas" class="seccion seccion--gris">
+            <div class="contenedor">
+                <div class="alertas-cabecera">
+                    <div>
+                        <span class="etiqueta etiqueta--azul">AVISOS DE EJEMPLO</span>
+                        <h2>Alertas y reportes comunitarios</h2>
+                        <p>Informacion demostrativa sobre tramos con demoras o afluencia.</p>
+                    </div>
+                    <button type="button" id="btnAbrirReporte" class="btn btn--naranja">
+                        Reportar incidencia
+                    </button>
+                </div>
+
+                <div id="listaAlertas" class="grid-tres">
+                    <article class="alerta alerta--alta">
+                        <span class="etiqueta-estado estado--alta">Congestion alta</span>
+                        <h3>Av. Javier Prado Este</h3>
+                        <p>Avance lento hacia Surco en hora punta. Considera unos 12 minutos adicionales.</p>
+                        <small>Ejemplo demostrativo · Hace 6 min</small>
+                    </article>
+
+                    <article class="alerta alerta--media">
+                        <span class="etiqueta-estado estado--media">Paradero saturado</span>
+                        <h3>Paradero Angamos</h3>
+                        <p>Mayor espera de pasajeros en horas de ingreso. Revisa puntos cercanos si es posible.</p>
+                        <small>Ejemplo demostrativo · Hace 11 min</small>
+                    </article>
+
+                    <article class="alerta alerta--baja">
+                        <span class="etiqueta-estado estado--baja">Circulacion regular</span>
+                        <h3>Av. Universitaria</h3>
+                        <p>Tramo con flujo habitual entre San Miguel y zonas universitarias.</p>
+                        <small>Ejemplo demostrativo · Hace 4 min</small>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- TESTIMONIOS -->
+        <section class="seccion">
+            <div class="contenedor">
+                <div class="seccion__titulo">
+                    <span class="etiqueta etiqueta--azul">PERFILES DE USO</span>
+                    <h2>Perfiles de uso ilustrativos</h2>\n                    <p>Los siguientes perfiles son ejemplos académicos y no corresponden a testimonios verificados.</p>
+                </div>
+
+                <div class="grid-tres">
+                    <article class="tarjeta">
+                        <p class="testimonio__texto">
+                            "Antes combinaba dos buses sin saber cual convenia mas. Ver el tiempo y los transbordos juntos ayuda a decidir mas rapido."
+                        </p>
+                        <strong class="testimonio__autor">Camila R.</strong>
+                        <span class="testimonio__rol">Estudiante · San Miguel</span>
+                    </article>
+
+                    <article class="tarjeta">
+                        <p class="testimonio__texto">
+                            "Saber si hay congestion en una avenida principal antes de salir evita llegar tarde a practicas o reuniones."
+                        </p>
+                        <strong class="testimonio__autor">Diego M.</strong>
+                        <span class="testimonio__rol">Practicante · Miraflores</span>
+                    </article>
+
+                    <article class="tarjeta">
+                        <p class="testimonio__texto">
+                            "Tener claro donde hacer transbordo y revisar avisos en un mismo lugar hace mas sencillo el trayecto."
+                        </p>
+                        <strong class="testimonio__autor">Lucia T.</strong>
+                        <span class="testimonio__rol">Pasajera frecuente · Los Olivos</span>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- PREGUNTAS FRECUENTES -->
+        <section id="preguntas" class="seccion seccion--gris">
+            <div class="contenedor contenedor--angosto">
+                <div class="seccion__titulo">
+                    <span class="etiqueta etiqueta--azul">PREGUNTAS FRECUENTES</span>
+                    <h2>Dudas comunes</h2>
+                </div>
+
+                <div class="faq">
+                    <div class="faq__item">
+                        <button type="button" class="faq__pregunta" aria-expanded="false">
+                            Apuray tiene algun costo para el pasajero?
+                            <span class="faq__signo">+</span>
+                        </button>
+                        <div class="faq__respuesta" hidden>
+                            <p>No. La consulta de rutas, comparacion de alternativas y revision de alertas esta pensada sin costo para los usuarios.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq__item">
+                        <button type="button" class="faq__pregunta" aria-expanded="false">
+                            Los datos de tiempo, tarifa y mapa son en tiempo real?
+                            <span class="faq__signo">+</span>
+                        </button>
+                        <div class="faq__respuesta" hidden>
+                            <p>No. Esta landing page es un prototipo academico; los tiempos, tarifas, reportes y ubicaciones del mapa son demostrativos.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq__item">
+                        <button type="button" class="faq__pregunta" aria-expanded="false">
+                            En que zonas esta enfocada la propuesta?
+                            <span class="faq__signo">+</span>
+                        </button>
+                        <div class="faq__respuesta" hidden>
+                            <p>Esta enfocada en rutas y ejes de transporte publico de Lima Metropolitana.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DESCARGA -->
+        <section id="descarga" class="descarga">
+            <div class="contenedor descarga__contenido">
+                <div>
+                    <h2>Lleva Apuray en tu celular</h2>
+                    <p>Versiones para Android e iOS en etapa de diseño y validación académica. No hay archivos de instalación disponibles.</p>
+                </div>
+                <div class="descarga__botones">
+                    <button type="button" class="btn btn--naranja btn-descarga" data-plataforma="Android">
+                        Descargar Android
+                    </button>
+                    <button type="button" class="btn btn--secundario btn-descarga" data-plataforma="iOS">
+                        Descargar iOS
+                    </button>
+                </div>
+                <p id="mensajeDescarga" class="descarga__aviso" role="status" aria-live="polite" hidden></p>
+            </div>
+        </section>
+
+        <!-- CONTACTO -->
+        <section id="contacto" class="seccion">
+            <div class="contenedor contacto__grid">
+                <div>
+                    <span class="etiqueta etiqueta--azul">CONTACTO</span>
+                    <h2>Escribenos tus comentarios</h2>
+                    <p>
+                        Si deseas compartir observaciones sobre rutas, paraderos o funciones de la landing,
+                        puedes dejar tu mensaje aqui.
+                    </p>
+                </div>
+
+                <form id="formularioContacto" class="formulario-caja">
+                    <div class="campo">
+                        <label for="nombreContacto">Nombre</label>
+                        <input type="text" id="nombreContacto" required placeholder="Tu nombre">
+                    </div>
+
+                    <div class="campo">
+                        <label for="correoContacto">Correo electronico</label>
+                        <input type="email" id="correoContacto" required placeholder="correo@ejemplo.com">
+                    </div>
+
+                    <div class="campo">
+                        <label for="mensajeContacto">Mensaje</label>
+                        <textarea id="mensajeContacto" required rows="4" placeholder="Escribe tu comentario o sugerencia"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn--azul btn--ancho">Enviar mensaje</button>
+                    <p id="feedbackContacto" class="aviso-exito" role="status" aria-live="polite" hidden></p>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- PIE DE PAGINA -->
+    <footer class="pie">
+        <div class="contenedor pie__contenido">
+            <div>
+                <strong>Apuray · TransitPath Solutions</strong>
+                <p>Lima Metropolitana, Peru · Prototipo academico.</p>
+            </div>
+            <nav class="pie__enlaces" aria-label="Enlaces del pie de pagina">
+                <a href="#planificador">Planificar</a>
+                <a href="#transporte">Transporte</a>
+                <a href="#alertas">Alertas</a>
+                <a href="#contacto">Contacto</a>
+            </nav>
+        </div>
+    </footer>
+
+    <!-- MODAL DE REPORTE -->
+    <div id="modalReporte" class="modal" hidden>
+        <div class="modal__caja" role="dialog" aria-modal="true" aria-labelledby="tituloModal" aria-describedby="descripcionModal" tabindex="-1">
+            <div class="modal__cabecera">
+                <h3 id="tituloModal">Registrar reporte de ejemplo</h3>
+                <button type="button" id="btnCerrarModal" class="modal__cerrar" aria-label="Cerrar">x</button>
+            </div>
+            <p id="descripcionModal" class="modal__descripcion">El aviso se agrega solo a esta vista mientras la página permanezca abierta. No se envía a un servidor.</p>
+
+            <form id="formularioReporte">
+                <div class="campo">
+                    <label for="tipoIncidencia">Tipo de aviso</label>
+                    <select id="tipoIncidencia">
+                        <option value="Congestion alta">Congestion alta</option>
+                        <option value="Paradero saturado">Paradero saturado</option>
+                        <option value="Unidad demorada">Unidad demorada</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="ubicacionIncidencia">Avenida o paradero</label>
+                    <input type="text" id="ubicacionIncidencia" required placeholder="Ej. Av. Arequipa cdra. 24" required>
+                </div>
+
+                <div class="campo">
+                    <label for="detalleIncidencia">Descripcion breve</label>
+                    <input type="text" id="detalleIncidencia" required placeholder="Ej. Trafico lento en sentido norte a sur" required>
+                </div>
+
+                <button type="submit" class="btn btn--naranja btn--ancho">Agregar aviso de prueba</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
